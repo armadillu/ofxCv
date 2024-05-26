@@ -125,11 +125,11 @@ namespace ofxCv {
 		}
 		
 	public:
-		Tracker<T>()
+		Tracker()
 		:persistence(15)
 		,curLabel(0)
-		,maximumDistance(64) {
-		}
+		,maximumDistance(64) {}
+
 		virtual ~Tracker(){};
 		void setPersistence(unsigned int persistence);
 		void setMaximumDistance(float maximumDistance);
