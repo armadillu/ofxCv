@@ -175,15 +175,15 @@ OpenCV の画像処理機能を使用したサンプル。モデル不要。
 - [x] ビルド確認
 - [x] 動作確認
 
-#### [ ] 12. example-clahe (適応的コントラスト)
-- [ ] ディレクトリ作成
-- [ ] ofApp.h 作成
-- [ ] ofApp.cpp 作成
-- [ ] main.cpp 作成
-- [ ] addons.make 作成
-- [ ] Makefile/config.make コピー
-- [ ] ビルド確認
-- [ ] 動作確認
+#### [x] 12. example-clahe (適応的コントラスト)
+- [x] ディレクトリ作成
+- [x] ofApp.h 作成
+- [x] ofApp.cpp 作成
+- [x] main.cpp 作成
+- [x] addons.make 作成
+- [x] Makefile/config.make コピー
+- [x] ビルド確認
+- [x] 動作確認
 
 ### Phase 3: 検出・認識系サンプル
 
@@ -325,10 +325,10 @@ Phase 4 (その他) ─┬─ 17. background-subtraction
 | Phase | 完了 | 合計 | 進捗 |
 |-------|-----|------|------|
 | Phase 1: DNN | 6 | 6 | 100% |
-| Phase 2: 画像処理 | 5 | 6 | 83% |
+| Phase 2: 画像処理 | 6 | 6 | 100% |
 | Phase 3: 検出 | 0 | 4 | 0% |
 | Phase 4: その他 | 0 | 4 | 0% |
-| **合計** | **11** | **20** | **55%** |
+| **合計** | **12** | **20** | **60%** |
 
 ---
 
