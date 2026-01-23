@@ -251,16 +251,16 @@ OpenCV の画像処理機能を使用したサンプル。モデル不要。
 - [x] ビルド確認
 - [x] 動作確認
 
-#### [ ] 19. example-fisheye (魚眼レンズ補正)
-- [ ] ディレクトリ作成
-- [ ] ofApp.h 作成
-- [ ] ofApp.cpp 作成
-- [ ] main.cpp 作成
-- [ ] addons.make 作成
-- [ ] Makefile/config.make コピー
-- [ ] サンプル魚眼画像追加
-- [ ] ビルド確認
-- [ ] 動作確認
+#### [x] 19. example-fisheye (魚眼レンズ補正)
+- [x] ディレクトリ作成
+- [x] ofApp.h 作成
+- [x] ofApp.cpp 作成
+- [x] main.cpp 作成
+- [x] addons.make 作成
+- [x] Makefile/config.make コピー
+- [x] サンプル魚眼画像追加
+- [x] ビルド確認
+- [x] 動作確認
 
 #### [ ] 20. example-morphology (形態学的処理)
 - [ ] ディレクトリ作成
@@ -327,8 +327,8 @@ Phase 4 (その他) ─┬─ 17. background-subtraction
 | Phase 1: DNN | 6 | 6 | 100% |
 | Phase 2: 画像処理 | 6 | 6 | 100% |
 | Phase 3: 検出 | 4 | 4 | 100% |
-| Phase 4: その他 | 2 | 4 | 50% |
-| **合計** | **18** | **20** | **90%** |
+| Phase 4: その他 | 3 | 4 | 75% |
+| **合計** | **19** | **20** | **95%** |
 
 ---
 
