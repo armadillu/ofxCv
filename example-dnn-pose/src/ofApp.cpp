@@ -80,7 +80,8 @@ void ofApp::processOutput(const Mat& output, int frameWidth, int frameHeight) {
     std::vector<Keypoint> keypoints(nParts);
 
     for(int n = 0; n < nParts; n++) {
-        Mat heatMap(H, W, CV_32F, output.ptr(0, n));
+        Mat heatMap(H, W, CV_32F,
+                    const_cast<float*>(output.ptr<float>(0, n)));
 
         Point maxLoc;
         double maxVal;
