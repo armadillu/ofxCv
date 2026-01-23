@@ -16,16 +16,16 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-	ofVec2f curPoint(mouseX, mouseY);
+	glm::vec3 curPoint(mouseX, mouseY, 0);
 	line.addVertex(curPoint);
-	
+
 	kalman.update(curPoint); // feed measurement
-	
+
 	point = kalman.getPrediction(); // prediction before measurement
 	predicted.addVertex(point);
 	estimated.addVertex(kalman.getEstimation()); // corrected estimation after measurement
-	
-	speed = kalman.getVelocity().length();
+
+	speed = glm::length(kalman.getVelocity());
 	int alpha = ofMap(speed, 0, 20, 50, 255, true);
 	line.addColor(ofColor(255, 255, 255, alpha));
 	predicted.addColor(ofColor(255, 0, 0, alpha));

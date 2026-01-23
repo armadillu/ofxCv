@@ -1,7 +1,15 @@
-#include "ofApp.h"
+#include "GeometryHelpers.h"
 
 using namespace ofxCv;
 using namespace cv;
+
+// Helper function to rotate a 2D vector
+inline glm::vec2 rotateVec2(const glm::vec2& v, float angleDeg) {
+    float angleRad = angleDeg * DEG_TO_RAD;
+    float c = cos(angleRad);
+    float s = sin(angleRad);
+    return glm::vec2(v.x * c - v.y * s, v.x * s + v.y * c);
+}
 
 template <typename Real>
 Real DistancePointEllipseSpecial (const Real e[2], const Real y[2], Real x[2])
@@ -25,7 +33,7 @@ Real DistancePointEllipseSpecial (const Real e[2], const Real y[2], Real x[2])
                 {
                     break;
                 }
-				
+
                 Real r[2] = { ey[0]/(t + esqr[0]), ey[1]/(t + esqr[1]) };
                 Real f = r[0]*r[0] + r[1]*r[1] - (Real)1;
                 if (f > (Real)0)
@@ -41,7 +49,7 @@ Real DistancePointEllipseSpecial (const Real e[2], const Real y[2], Real x[2])
                     break;
                 }
             }
-			
+
             x[0] = esqr[0]*y[0]/(t + esqr[0]);
             x[1] = esqr[1]*y[1]/(t + esqr[1]);
             Real d[2] = { x[0] - y[0], x[1] - y[1] };
@@ -94,7 +102,7 @@ Real DistancePointEllipse (const Real e[2], const Real y[2], Real x[2])
     {
         reflect[i] = (y[i] < (Real)0);
     }
-	
+
     // Determine the axis order for decreasing extents.
     int permute[2];
     if (e[0] < e[1])
@@ -105,13 +113,13 @@ Real DistancePointEllipse (const Real e[2], const Real y[2], Real x[2])
     {
         permute[0] = 0;  permute[1] = 1;
     }
-	
+
     int invpermute[2];
     for (i = 0; i < 2; ++i)
     {
         invpermute[permute[i]] = i;
     }
-	
+
     Real locE[2], locY[2];
     for (i = 0; i < 2; ++i)
     {
@@ -123,10 +131,10 @@ Real DistancePointEllipse (const Real e[2], const Real y[2], Real x[2])
             locY[i] = -locY[i];
         }
     }
-	
+
     Real locX[2];
     Real distance = DistancePointEllipseSpecial(locE, locY, locX);
-	
+
     // Restore the axis order and reflections.
     for (i = 0; i < 2; ++i)
     {
@@ -137,75 +145,75 @@ Real DistancePointEllipse (const Real e[2], const Real y[2], Real x[2])
         }
         x[i] = locX[j];
     }
-	
+
     return distance;
 }
 
-ofVec2f closestPointOnRay(const ofVec2f& p1, const ofVec2f& p2, const ofVec2f& p3) {
+glm::vec2 closestPointOnRay(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3) {
 	if(p1 == p2) {
 		return p1;
 	}
-	
+
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
-	float len = (p2 - p1).length();
+	float len = glm::length(p2 - p1);
 	u /= (len * len);
-	
-	return p1.getInterpolated(p2, u);
+
+	return glm::mix(p1, p2, u);
 }
 
-ofVec2f closestPointOnLine(const ofVec2f& p1, const ofVec2f& p2, const ofVec2f& p3) {
+glm::vec2 closestPointOnLine(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3) {
 	if(p1 == p2) {
 		return p1;
 	}
-	
+
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
-	float len = (p2 - p1).length();
+	float len = glm::length(p2 - p1);
 	u /= (len * len);
-	
+
 	// clamp u
 	if(u > 1) {
 		u = 1;
 	} else if(u < 0) {
 		u = 0;
 	}
-	return p1.getInterpolated(p2, u);
+	return glm::mix(p1, p2, u);
 }
 
-ofVec2f closestPointOnRect(const cv::RotatedRect& rect, const ofVec2f& point) {
-	ofVec2f norm = point;
-	ofVec2f offset(rect.center.x, rect.center.y);
+glm::vec2 closestPointOnRect(const cv::RotatedRect& rect, const glm::vec2& point) {
+	glm::vec2 norm = point;
+	glm::vec2 offset(rect.center.x, rect.center.y);
 	norm -= offset;
-	norm.rotate(-rect.angle);
+	norm = rotateVec2(norm, -rect.angle);
 	float w = rect.size.width / 2, h = rect.size.height / 2;
-	ofVec2f nearest;
+	glm::vec2 nearest;
 	if((norm.x > w || norm.x < -w) || (norm.y < -h || norm.y > h)) {
-		nearest.set(ofClamp(norm.x, -w, w), ofClamp(norm.y, -h, h));
+		nearest = glm::vec2(ofClamp(norm.x, -w, w), ofClamp(norm.y, -h, h));
 	} else {
 		if(fabsf(fabsf(norm.x) - w) < fabsf(fabsf(norm.y) - h)) {
-			nearest.set(w * (norm.x > 0 ? 1 : -1), norm.y);
+			nearest = glm::vec2(w * (norm.x > 0 ? 1 : -1), norm.y);
 		} else {
-			nearest.set(norm.x, h * (norm.y > 0 ? 1 : -1));
+			nearest = glm::vec2(norm.x, h * (norm.y > 0 ? 1 : -1));
 		}
 	}
-	nearest.rotate(rect.angle);
+	nearest = rotateVec2(nearest, rect.angle);
 	nearest += offset;
 	return nearest;
 }
 
-ofVec2f closestPointOnCircle(const ofVec2f& center, float radius, const ofVec2f& point) {
-	ofVec2f nearest = point - center;
-	nearest *= radius / nearest.length();
+glm::vec2 closestPointOnCircle(const glm::vec2& center, float radius, const glm::vec2& point) {
+	glm::vec2 nearest = point - center;
+	nearest *= radius / glm::length(nearest);
 	nearest += center;
 	return nearest;
 }
 
-ofVec2f closestPointOnEllipse(const cv::RotatedRect& ellipse, const ofVec2f& point) {
-	ofVec2f norm = point;
-	ofVec2f offset(ellipse.center.x, ellipse.center.y);
+glm::vec2 closestPointOnEllipse(const cv::RotatedRect& ellipse, const glm::vec2& point) {
+	glm::vec2 norm = point;
+	glm::vec2 offset(ellipse.center.x, ellipse.center.y);
 	norm -= offset;
-	norm.rotate(-ellipse.angle);
+	norm = rotateVec2(norm, -ellipse.angle);
 	bool flipX = norm.x < 0, flipY = norm.y < 0;
 	if(flipX) norm.x *= -1;
 	if(flipY) norm.y *= -1;
@@ -213,26 +221,26 @@ ofVec2f closestPointOnEllipse(const cv::RotatedRect& ellipse, const ofVec2f& poi
 	float y[] = {norm.x, norm.y};
 	float x[2];
 	DistancePointEllipse(e, y, x);
-	ofVec2f result(x[0], x[1]);
+	glm::vec2 result(x[0], x[1]);
 	if(flipX) result.x *= -1;
 	if(flipY) result.y *= -1;
-	result.rotate(ellipse.angle);
+	result = rotateVec2(result, ellipse.angle);
 	result += offset;
 	return result;
 }
 
-float distanceToEllipse(const ofVec2f& point, const cv::RotatedRect& ellipse) {
-	return closestPointOnEllipse(ellipse, point).distance(point);
+float distanceToEllipse(const glm::vec2& point, const cv::RotatedRect& ellipse) {
+	return glm::distance(closestPointOnEllipse(ellipse, point), point);
 }
 
-float distanceToRect(const ofVec2f& point, const cv::RotatedRect& rect) {
-	return closestPointOnRect(rect, point).distance(point);
+float distanceToRect(const glm::vec2& point, const cv::RotatedRect& rect) {
+	return glm::distance(closestPointOnRect(rect, point), point);
 }
 
-float distanceToLine(const ofVec2f& point, const ofVec2f& start, const ofVec2f& end) {
-	return closestPointOnLine(start, end, point).distance(point);					  
+float distanceToLine(const glm::vec2& point, const glm::vec2& start, const glm::vec2& end) {
+	return glm::distance(closestPointOnLine(start, end, point), point);
 }
 
-float distanceToRay(const ofVec2f& point, const ofVec2f& start, const ofVec2f& end) {
-	return closestPointOnRay(start, end, point).distance(point);					  
+float distanceToRay(const glm::vec2& point, const glm::vec2& start, const glm::vec2& end) {
+	return glm::distance(closestPointOnRay(start, end, point), point);
 }

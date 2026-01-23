@@ -306,8 +306,8 @@ namespace ofxCv {
     bool Calibration::findBoard(cv::Mat img, std::vector<cv::Point2f>& pointBuf, bool refine) {
         bool found=false;
         if(patternType == CHESSBOARD) {
-            // no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
-            int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
+            // no CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
+            int chessFlags = cv::CALIB_CB_ADAPTIVE_THRESH;// | cv::CALIB_CB_NORMALIZE_IMAGE;
             found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
             
             // improve corner accuracy
@@ -321,7 +321,7 @@ namespace ofxCv {
                 if(refine) {
                     // the 11x11 dictates the smallest image space square size allowed
                     // in other words, if your smallest square is 11x11 pixels, then set this to 11x11
-                    cornerSubPix(grayMat, pointBuf, subpixelSize,  cv::Size(-1,-1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
+                    cornerSubPix(grayMat, pointBuf, subpixelSize,  cv::Size(-1,-1), cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1 ));
                 }
             }
         }
@@ -564,7 +564,7 @@ namespace ofxCv {
         
         for(std::size_t i = 0; i < objectPoints.size(); i++) {
             projectPoints(cv::Mat(objectPoints[i]), boardRotations[i], boardTranslations[i], distortedIntrinsics.getCameraMatrix(), distCoeffs, imagePoints2);
-            double err = norm(cv::Mat(imagePoints[i]), cv::Mat(imagePoints2), CV_L2);
+            double err = norm(cv::Mat(imagePoints[i]), cv::Mat(imagePoints2), cv::NORM_L2);
             int n = objectPoints[i].size();
             perViewErrors[i] = sqrt(err * err / n);
             totalErr += err * err;

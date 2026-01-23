@@ -1,63 +1,68 @@
-# All variables and this file are optional, if they are not present the PG and the
-# makefiles will try to parse the correct values from the file system.
+# ofxCv - OpenCV 4.x wrapper for openFrameworks (standalone)
 #
-# Variables that specify exclusions can use % as a wildcard to specify that anything in
-# that position will match. A partial path can also be specified to, for example, exclude
-# a whole folder from the parsed paths from the file system
-#
-# Variables can be specified using = or +=
-# = will clear the contents of that variable both specified from the file or the ones parsed
-# from the file system
-# += will add the values to the previous ones in the file or the ones parsed from the file 
-# system
-# 
-# The PG can be used to detect errors in this file, just create a new project with this addon 
-# and the PG will write to the console the kind of error and in which line it is
+# This addon includes OpenCV 4.x libraries and does NOT depend on ofxOpenCv.
+# Run scripts/build_opencv_macos_arm64.sh to build OpenCV libraries.
 
 meta:
 	ADDON_NAME = ofxCv
-	ADDON_DESCRIPTION = Addon for computer vision using the open source library openCv
+	ADDON_DESCRIPTION = OpenCV 4.x wrapper for openFrameworks (standalone, no ofxOpenCv dependency)
 	ADDON_AUTHOR = Kyle McDonald
-	ADDON_TAGS = "computer vision" "opencv" "image processing"
+	ADDON_TAGS = "computer vision" "opencv" "image processing" "opencv4" "dnn"
 	ADDON_URL = https://github.com/kylemcdonald/ofxcv
 
 common:
-	# dependencies with other addons, a list of them separated by spaces 
-	# or use += in several lines
-	ADDON_DEPENDENCIES = ofxOpenCv
-	
-	# include search paths, this will be usually parsed from the file system
-	# but if the addon or addon libraries need special search paths they can be
-	# specified here separated by spaces or one per line using +=
-	ADDON_INCLUDES = libs/ofxCv/include
+	# NO ofxOpenCv dependency - this addon is standalone
+	# ADDON_DEPENDENCIES =
+
+	# Include paths
+	ADDON_INCLUDES = src
+	ADDON_INCLUDES += libs/ofxCv/include
+	ADDON_INCLUDES += libs/opencv/include/opencv4
 	ADDON_INCLUDES += libs/CLD/include/CLD
-	ADDON_INCLUDES += src
-	
-	# any special flag that should be passed to the compiler when using this
-	# addon
-	# ADDON_CFLAGS =
-	
-	# any special flag that should be passed to the linker when using this
-	# addon, also used for system libraries with -lname
-	# ADDON_LDFLAGS =
-	
-	# linux only, any library that should be included in the project using
-	# pkg-config
-	# ADDON_PKG_CONFIG_LIBRARIES =
-	
-	# osx/iOS only, any framework that should be included in the project
-	# ADDON_FRAMEWORKS =
-	
-	# source files, these will be usually parsed from the file system looking
-	# in the src folders in libs and the root of the addon. if your addon needs
-	# to include files in different places or a different set of files per platform
-	# they can be specified here
-	# ADDON_SOURCES =
-	
-	# some addons need resources to be copied to the bin/data folder of the project
-	# specify here any files that need to be copied, you can use wildcards like * and ?
-	# ADDON_DATA = 
-	
-	# when parsing the file system looking for libraries exclude this for all or
-	# a specific platform
-	# ADDON_LIBS_EXCLUDE =
+
+	# Compiler flags
+	ADDON_CPPFLAGS = -DOFXCV_OPENCV4
+
+osx:
+	# OpenCV static libraries for macOS
+	ADDON_LIBS = libs/opencv/lib/osx-arm64/libopencv_core.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_imgproc.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_objdetect.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_calib3d.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_features2d.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_flann.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_dnn.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libopencv_imgcodecs.a
+
+	# 3rdparty libraries (built with OpenCV)
+	# Note: libzlib, liblibpng, liblibjpeg-turbo are provided by openFrameworks (FreeImage)
+	# so we don't link them here to avoid duplicate symbol errors
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/osx-arm64/libtegra_hal.a
+
+	# System frameworks required by OpenCV
+	ADDON_FRAMEWORKS = Accelerate
+	ADDON_FRAMEWORKS += CoreGraphics
+	ADDON_FRAMEWORKS += CoreVideo
+	ADDON_FRAMEWORKS += OpenCL
+
+linux64:
+	# Use system OpenCV via pkg-config
+	ADDON_PKG_CONFIG_LIBRARIES = opencv4
+
+	# Or use static libraries:
+	# ADDON_LIBS = libs/opencv/lib/linux64/libopencv_core.a
+	# ADDON_LIBS += libs/opencv/lib/linux64/libopencv_imgproc.a
+	# ... etc
+
+vs:
+	# Windows Visual Studio
+	ADDON_INCLUDES += libs/opencv/include/opencv4
+
+	# For static linking:
+	# ADDON_LIBS = libs/opencv/lib/vs/x64/opencv_world4100.lib
+
+	# For dynamic linking:
+	# ADDON_DLLS_TO_COPY = libs/opencv/lib/vs/x64/opencv_world4100.dll

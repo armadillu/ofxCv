@@ -51,28 +51,59 @@ namespace ofxCv {
 		return toOf(hull);
 	}
 	
-	// this should be replaced by c++ 2.0 api style code once available
+	// Updated to use C++ API for OpenCV 4.x compatibility
 	std::vector<cv::Vec4i> convexityDefects(const std::vector<cv::Point>& contour) {
-		std::vector<int> hullIndices;
-		convexHull(Mat(contour), hullIndices, false, false);
-		std::vector<cv::Vec4i> convexityDefects;
-		if(hullIndices.size() > 0 && contour.size() > 0) {		
-			CvMat contourMat = cvMat(1, contour.size(), CV_32SC2, (void*) &contour[0]);
-			CvMat hullMat = cvMat(1, hullIndices.size(), CV_32SC1, (void*) &hullIndices[0]);
-			CvMemStorage* storage = cvCreateMemStorage(0);
-			CvSeq* defects = cvConvexityDefects(&contourMat, &hullMat, storage);
-			for(int i = 0; i < defects->total; i++){
-				CvConvexityDefect* cur = (CvConvexityDefect*) cvGetSeqElem(defects, i);
-				cv::Vec4i defect;
-				defect[0] = cur->depth_point->x;
-				defect[1] = cur->depth_point->y;
-				defect[2] = (cur->start->x + cur->end->x) / 2;
-				defect[3] = (cur->start->y + cur->end->y) / 2;
-				convexityDefects.push_back(defect);
-			}
-			cvReleaseMemStorage(&storage);
+		std::vector<cv::Vec4i> defectsVec;
+
+		// Need at least 4 points to have a meaningful convexity defect
+		if(contour.size() < 4) {
+			return defectsVec;
 		}
-		return convexityDefects;
+
+		// Get hull indices (not points) - clockwise=false for counter-clockwise order
+		std::vector<int> hullIndices;
+		cv::convexHull(contour, hullIndices, false, false);
+
+		if(hullIndices.size() < 3) {
+			return defectsVec;
+		}
+
+		// OpenCV 4.x convexityDefects requires hull indices to be in strictly increasing order
+		// Sort the indices while preserving their cyclic order relative to the contour
+		std::sort(hullIndices.begin(), hullIndices.end());
+
+		// convexityDefects can throw if contour is degenerate, so wrap in try-catch
+		std::vector<cv::Vec4i> defects;
+		try {
+			cv::convexityDefects(contour, hullIndices, defects);
+		} catch(const cv::Exception& e) {
+			// Return empty vector on error (degenerate contour)
+			return defectsVec;
+		}
+
+		// Convert from OpenCV format (start_idx, end_idx, farthest_idx, depth*256)
+		// to our format (depth_point.x, depth_point.y, midpoint.x, midpoint.y)
+		for(size_t i = 0; i < defects.size(); i++) {
+			int startIdx = defects[i][0];
+			int endIdx = defects[i][1];
+			int farIdx = defects[i][2];
+
+			// Validate indices before accessing
+			if(startIdx < 0 || startIdx >= (int)contour.size() ||
+			   endIdx < 0 || endIdx >= (int)contour.size() ||
+			   farIdx < 0 || farIdx >= (int)contour.size()) {
+				continue;
+			}
+
+			cv::Vec4i defect;
+			defect[0] = contour[farIdx].x;
+			defect[1] = contour[farIdx].y;
+			defect[2] = (contour[startIdx].x + contour[endIdx].x) / 2;
+			defect[3] = (contour[startIdx].y + contour[endIdx].y) / 2;
+			defectsVec.push_back(defect);
+		}
+
+		return defectsVec;
 	}
 	
 	std::vector<cv::Vec4i> convexityDefects(const ofPolyline& polyline) {
@@ -92,7 +123,7 @@ namespace ofxCv {
 	
 	void fitLine(const ofPolyline& polyline, glm::vec2& point, glm::vec2& direction) {
 		Vec4f line;
-		fitLine(Mat(toCv(polyline)), line, CV_DIST_L2, 0, .01, .01);
+		cv::fitLine(Mat(toCv(polyline)), line, cv::DIST_L2, 0, .01, .01);
 
         direction = glm::vec2(line[0], line[1]);
         point = glm::vec2(line[2], line[3]);

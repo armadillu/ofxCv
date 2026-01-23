@@ -62,27 +62,27 @@ public:
 class LineGraph {
 protected:
     ofMesh mesh;
-    ofVec2f min, max;
+    glm::vec2 min, max;
     int n;
-    
+
 public:
     LineGraph()
     :n(0) {
     }
     void reset() {
         n = 0;
-        min = ofVec2f();
-        max = ofVec2f();
+        min = glm::vec2(0);
+        max = glm::vec2(0);
     }
     void add(float y) {
-        ofVec2f cur(n, y);
+        glm::vec3 cur(n, y, 0);
         mesh.addVertex(cur);
         if(n == 0) {
-            min = cur;
-            max = cur;
+            min = glm::vec2(cur);
+            max = glm::vec2(cur);
         } else {
-            min.set(MIN(min.x, cur.x), MIN(min.y, cur.y));
-            max.set(MAX(max.x, cur.x), MAX(max.y, cur.y));
+            min = glm::vec2(MIN(min.x, cur.x), MIN(min.y, cur.y));
+            max = glm::vec2(MAX(max.x, cur.x), MAX(max.y, cur.y));
         }
         n++;
     }
@@ -94,7 +94,7 @@ public:
             ofPushMatrix();
             ofTranslate(0, h);
             ofScale(w / (max.x - min.x), -h / (max.y - min.y));
-            ofTranslate(-min);
+            ofTranslate(-min.x, -min.y);
             mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
             mesh.draw();
             ofPopMatrix();

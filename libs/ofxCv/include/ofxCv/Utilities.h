@@ -1,7 +1,7 @@
 /*
  utilities are used internally by ofxCv, and make it easier to write code that
  can work with OpenCv and openFrameworks data.
- 
+
  useful functions from this file:
  - imitate and copy
  - toCv and toOf
@@ -9,7 +9,18 @@
 
 #pragma once
 
-#include "opencv2/opencv.hpp"
+// OpenCV 4.x headers
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/objdetect.hpp>
+#include <opencv2/video.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/features2d.hpp>
+
+// OpenCV 4.x compatibility layer
+#include "ofxCv/Cv4Compat.h"
+
+// openFrameworks headers
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
@@ -18,8 +29,6 @@
 #include "ofVideoGrabber.h"
 #include "ofPolyline.h"
 #include "ofVectorMath.h"
-#include "opencv2/imgproc/imgproc_c.h"
-#include "opencv2/calib3d/calib3d_c.h"
 namespace ofxCv {
 	// these functions are for accessing Mat, ofPixels and ofImage consistently.
 	// they're very important for imitate().

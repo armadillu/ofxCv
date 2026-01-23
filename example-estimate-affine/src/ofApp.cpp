@@ -5,38 +5,40 @@ using namespace cv;
 
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-	
+
 	ofMatrix4x4 rigid;
-	ofVec3f translation(ofRandomf(), ofRandomf(), ofRandomf());
-	ofQuaternion rotation(ofRandomf(), ofVec3f(ofRandomf(), ofRandomf(), ofRandomf()));
+	glm::vec3 translation(ofRandomf(), ofRandomf(), ofRandomf());
+	ofQuaternion rotation(ofRandomf(), glm::vec3(ofRandomf(), ofRandomf(), ofRandomf()));
 	rigid.translate(translation);
 	rigid.rotate(rotation);
-	
-	vector<ofVec3f> from;
+
+	vector<glm::vec3> from;
 	for(int i = 0; i < 4; i++) {
-		from.push_back(ofVec3f(ofRandom(1,2), ofRandom(1,2), ofRandom(5,6)));
-		from.push_back(ofVec3f(ofRandom(3,4), ofRandom(3,4), ofRandom(5,6)));
-		from.push_back(ofVec3f(ofRandom(1,2), ofRandom(3,4), ofRandom(5,6)));
-		from.push_back(ofVec3f(ofRandom(3,4), ofRandom(1,2), ofRandom(5,6)));
+		from.push_back(glm::vec3(ofRandom(1,2), ofRandom(1,2), ofRandom(5,6)));
+		from.push_back(glm::vec3(ofRandom(3,4), ofRandom(3,4), ofRandom(5,6)));
+		from.push_back(glm::vec3(ofRandom(1,2), ofRandom(3,4), ofRandom(5,6)));
+		from.push_back(glm::vec3(ofRandom(3,4), ofRandom(1,2), ofRandom(5,6)));
 	}
-	
-	vector<ofVec3f> to;
+
+	vector<glm::vec3> to;
 	for(int i = 0; i < from.size(); i++) {
 		// opencv assumes you're doing premultiplication
-		to.push_back(rigid.preMult(from[i]));
+		ofVec4f result = rigid.preMult(ofVec4f(from[i].x, from[i].y, from[i].z, 1.0f));
+		to.push_back(glm::vec3(result.x, result.y, result.z));
 	}
-	
+
 	ofMatrix4x4 rigidEstimate = estimateAffine3D(from, to);
 
 	cout << "original matrix: " << endl << rigid << endl;
 	cout << "estimated as: " << endl << rigidEstimate << endl;
-	
+
 	for(int i = 0; i < from.size(); i++) {
 		// opencv assumes you're doing premultiplication
-		ofVec3f after = rigidEstimate.preMult(from[i]);
+		ofVec4f result = rigidEstimate.preMult(ofVec4f(from[i].x, from[i].y, from[i].z, 1.0f));
+		glm::vec3 after(result.x, result.y, result.z);
 		cout << from[i] << " -> " << to[i] << " estimated as: " << after << endl;
 	}
-	
+
 	ofVec3f decompTranslation, decompScale;
 	ofQuaternion decompRotation, decompSo;
 	rigidEstimate.decompose(decompTranslation, decompRotation, decompScale, decompSo);

@@ -39,3 +39,13 @@ build/
 !data/
 
 ofxCv.wiki/
+
+# Local tooling artifacts
+.ralph/
+ralph.yml
+scripts/
+
+# Documentation files
+*.md
+CLAUDE.md
+DEVELOPMENT_PLAN.md

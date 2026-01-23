@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxCv.h"
-
 #include "GeometryHelpers.h"
 
 class Recognizer {	
@@ -49,27 +48,33 @@ public:
 		if(isLine) {
 			gestureType = GESTURE_LINE;
 			fitError = lineSum;
-			idealized.addVertex(closestPointOnRay(linePoint, linePoint + lineDirection, polyline[0]));
-			idealized.addVertex(closestPointOnRay(linePoint, linePoint + lineDirection, polyline[polyline.size() - 1]));
+			glm::vec2 p0 = closestPointOnRay(linePoint, linePoint + lineDirection, polyline[0]);
+			glm::vec2 p1 = closestPointOnRay(linePoint, linePoint + lineDirection, polyline[polyline.size() - 1]);
+			idealized.addVertex(glm::vec3(p0, 0));
+			idealized.addVertex(glm::vec3(p1, 0));
 		} else {
 			gestureType = GESTURE_ARC;
 			fitError = ellipseSum;
-			ofVec2f center(ellipse.center.x, ellipse.center.y);
+			glm::vec2 center(ellipse.center.x, ellipse.center.y);
 			// it would make more sense to do this at a fixed resolution
 			for(int i = 0; i < polyline.size(); i++) {
-				ofVec2f cur = polyline[i];
-				cur -= center, cur.rotate(-ellipse.angle);
+				glm::vec2 cur = polyline[i];
+				cur -= center;
+				float angle = -ellipse.angle * DEG_TO_RAD;
+				cur = glm::vec2(cur.x * cos(angle) - cur.y * sin(angle), cur.x * sin(angle) + cur.y * cos(angle));
 				float a = ellipse.size.width / 2, b = ellipse.size.height / 2, x0 = cur.x, y0 = cur.y;
 				cur *= (a * b) / sqrtf(a * a * y0 * y0 + b * b * x0 * x0);
-				cur.rotate(ellipse.angle), cur += center;
-				idealized.addVertex(cur);
+				angle = ellipse.angle * DEG_TO_RAD;
+				cur = glm::vec2(cur.x * cos(angle) - cur.y * sin(angle), cur.x * sin(angle) + cur.y * cos(angle));
+				cur += center;
+				idealized.addVertex(glm::vec3(cur, 0));
 			}
 		}
 	}
 	
 protected:
 	cv::RotatedRect ellipse, rect;
-	ofVec2f linePoint, lineDirection;
+	glm::vec2 linePoint, lineDirection;
 	ofPolyline idealized;
 	float lineRatio, fitError;
 	GestureType gestureType;
