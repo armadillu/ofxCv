@@ -134,15 +134,15 @@ OpenCV の画像処理機能を使用したサンプル。モデル不要。
 - [x] ビルド確認
 - [x] 動作確認
 
-#### [ ] 8. example-inpainting (画像修復)
-- [ ] ディレクトリ作成
-- [ ] ofApp.h 作成
-- [ ] ofApp.cpp 作成
-- [ ] main.cpp 作成
-- [ ] addons.make 作成
-- [ ] Makefile/config.make コピー
-- [ ] ビルド確認
-- [ ] 動作確認
+#### [x] 8. example-inpainting (画像修復)
+- [x] ディレクトリ作成
+- [x] ofApp.h 作成
+- [x] ofApp.cpp 作成
+- [x] main.cpp 作成
+- [x] addons.make 作成
+- [x] Makefile/config.make コピー
+- [x] ビルド確認
+- [x] 動作確認
 
 #### [ ] 9. example-hdr (HDR画像生成)
 - [ ] ディレクトリ作成
@@ -325,10 +325,10 @@ Phase 4 (その他) ─┬─ 17. background-subtraction
 | Phase | 完了 | 合計 | 進捗 |
 |-------|-----|------|------|
 | Phase 1: DNN | 6 | 6 | 100% |
-| Phase 2: 画像処理 | 1 | 6 | 17% |
+| Phase 2: 画像処理 | 2 | 6 | 33% |
 | Phase 3: 検出 | 0 | 4 | 0% |
 | Phase 4: その他 | 0 | 4 | 0% |
-| **合計** | **7** | **20** | **35%** |
+| **合計** | **8** | **20** | **40%** |
 
 ---
 
