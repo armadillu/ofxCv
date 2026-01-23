@@ -230,15 +230,15 @@ OpenCV の画像処理機能を使用したサンプル。モデル不要。
 
 ### Phase 4: その他のサンプル
 
-#### [ ] 17. example-background-subtraction (動体検出)
-- [ ] ディレクトリ作成
-- [ ] ofApp.h 作成
-- [ ] ofApp.cpp 作成
-- [ ] main.cpp 作成
-- [ ] addons.make 作成
-- [ ] Makefile/config.make コピー
-- [ ] ビルド確認
-- [ ] 動作確認
+#### [x] 17. example-background-subtraction (動体検出)
+- [x] ディレクトリ作成
+- [x] ofApp.h 作成
+- [x] ofApp.cpp 作成
+- [x] main.cpp 作成
+- [x] addons.make 作成
+- [x] Makefile/config.make コピー
+- [x] ビルド確認
+- [x] 動作確認
 
 #### [ ] 18. example-stereo (ステレオ深度推定)
 - [ ] ディレクトリ作成
@@ -327,8 +327,8 @@ Phase 4 (その他) ─┬─ 17. background-subtraction
 | Phase 1: DNN | 6 | 6 | 100% |
 | Phase 2: 画像処理 | 6 | 6 | 100% |
 | Phase 3: 検出 | 4 | 4 | 100% |
-| Phase 4: その他 | 0 | 4 | 0% |
-| **合計** | **16** | **20** | **80%** |
+| Phase 4: その他 | 1 | 4 | 25% |
+| **合計** | **17** | **20** | **85%** |
 
 ---
 
