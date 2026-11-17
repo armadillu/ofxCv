@@ -18,7 +18,9 @@ void ofApp::setup() {
 		float squareSize = settings["squareSize"];
 		calibration.setSquareSize(squareSize);
 		CalibrationPattern patternType;
-		switch(settings["patternType"]) {
+		int patternTypeValue;
+		settings["patternType"] >> patternTypeValue;
+		switch(patternTypeValue) {
 			case 0: patternType = CHESSBOARD; break;
 			case 1: patternType = CIRCLES_GRID; break;
 			case 2: patternType = ASYMMETRIC_CIRCLES_GRID; break;
