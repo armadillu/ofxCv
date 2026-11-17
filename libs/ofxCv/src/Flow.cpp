@@ -183,6 +183,16 @@ namespace ofxCv {
 		}
 		return ret;
 	}
+
+	std::vector<glm::vec2> FlowPyrLK::getPrevious(){
+		std::vector<glm::vec2> ret;
+		for(std::size_t i = 0; i < prevPts.size(); i++) {
+			if(i < status.size() && status[i]){
+				ret.push_back(toOf(prevPts[i]));
+			}
+		}
+		return ret;
+	}
     
 	std::vector<glm::vec2> FlowPyrLK::getMotion(){
 		std::vector<glm::vec2> ret;
